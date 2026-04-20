@@ -8,9 +8,9 @@
     --text-muted: #999999;
     --bg-light: #FFFFFF;
     --bg-gray: #F8F8F8;
-    --serif: 'Prata', serif; /* Default serif for other headings */
-    --hero-font: 'Cinzel', serif; /* User requested font for Hero */
-    --sans: 'Inter', sans-serif;
+    --serif: 'Cinzel', serif; 
+    --hero-font: 'Cinzel', serif; 
+    --sans: 'Poppins', sans-serif;
     --transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
     --container-width: 1200px;
 }
@@ -54,18 +54,15 @@ body {
     overflow-x: hidden;
 }
 
-h1, .hero-headline {
+h1, h2, h3, h4, .hero-headline {
     font-family: var(--hero-font);
-    letter-spacing: 1px;
     font-weight: 400;
-    text-transform: uppercase;
     margin: 0;
 }
 
-h2, h3, h4 {
-    font-family: var(--serif);
-    font-weight: 400;
-    margin: 0;
+h1, .hero-headline {
+    letter-spacing: 1px;
+    text-transform: uppercase;
 }
 
 p { margin: 0; }
@@ -219,7 +216,7 @@ header {
 
 /* Sections Styling - 1:1 Match Spacing */
 .usp-section { padding: 40px 0; text-align: center; padding-top: 80px; }
-.usp-headline { font-size: 15px; margin-bottom: 70px; letter-spacing: 2px; line-height: 1.8; opacity: 0.8; }
+.usp-headline { font-family: var(--hero-font); font-size: 15px; margin-bottom: 70px; letter-spacing: 2px; line-height: 1.8; opacity: 0.8; }
 
 .usp-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
 .usp-item {
@@ -232,21 +229,21 @@ header {
     transform: translateY(-5px);
 }
 .usp-item svg { width: 44px; height: 44px; margin-bottom: 18px; color: var(--primary-red); }
-.usp-item h4 { font-size: 15px; font-weight: 600; line-height: 1.4; text-transform: none; }
+.usp-item h4 { font-family: var(--sans); font-size: 15px; font-weight: 600; line-height: 1.4; text-transform: none; }
 
 .confused-section { padding: 20px 0; padding-bottom: 80px;}
 .confused-container { display: flex; border-radius: 0; overflow: hidden; border: 3px solid #000; box-shadow: none; }
 
-.confused-left { flex: 1; background: var(--dark-bg); color: white; padding: 30px; border-right: 2px solid #000; display: flex; flex-direction: column; justify-content: flex-start; padding-top: 80px; }
-.confused-left h2 { font-family: var(--sans); font-size: 46px; line-height: 1.1; margin-bottom: 120px; font-weight: 500; letter-spacing: -1px; }
+.confused-left { flex: 1; background: var(--dark-bg); color: white; padding: 80px 60px; border-right: 2px solid #000; display: flex; flex-direction: column; justify-content: flex-start; }
+.confused-left h2 { font-family: var(--hero-font); font-size: 46px; line-height: 1.1; margin-bottom: 120px; font-weight: 400; letter-spacing: -1px; }
 .confused-sub-text p { margin-bottom: 30px; font-size: 18px; opacity: 1; font-weight: 400; line-height: 1.4; color: white; }
 
-.confused-right { flex: 1.6; background: white; padding: 30px; display: flex; flex-direction: column; justify-content: center; }
-.confused-right h3 { font-family: var(--serif); font-size: 28px; line-height: 1.5; margin-bottom: 35px; text-transform: uppercase; letter-spacing: 1px; color: #111; font-weight: 400; }
+.confused-right { flex: 1.6; background: white; padding: 60px 80px; display: flex; flex-direction: column; justify-content: center; }
+.confused-right h3 { font-family: var(--hero-font); font-size: 28px; line-height: 1.5; margin-bottom: 35px; text-transform: uppercase; letter-spacing: 1px; color: #111; font-weight: 400; }
 
 .booking-widget { display: flex; gap: 40px; align-items: flex-start; }
 .booking-list { flex: 1; }
-.booking-title { font-weight: 600; margin-bottom: 25px; font-size: 14px; }
+.booking-title { font-family: var(--hero-font); font-weight: 600; margin-bottom: 25px; font-size: 14px; }
 .booking-steps { padding-left: 0; list-style: none; margin: 0; }
 .booking-steps li { margin-bottom: 18px; font-size: 13px; color: #333; line-height: 1.4; }
 .btn-booking { margin-top: 20px; }
@@ -362,7 +359,7 @@ header {
 }
 
 .stats-section { background: var(--dark-bg); color: white; padding: 60px 0; text-align: center; overflow: hidden; }
-.stats-heading { color: rgba(255,255,255,0.5); font-size: 25px; margin-bottom: 50px; }
+.stats-heading { font-family: var(--hero-font); color: rgba(255,255,255,0.5); font-size: 25px; margin-bottom: 50px; }
 .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px; }
 .stat-item {
     opacity: 0;
@@ -388,6 +385,7 @@ header {
 }
 
 .testimonial-sub {
+    font-family: var(--hero-font);
     color: var(--primary-red); 
     font-weight: 700; 
     font-size: 13px; 
@@ -517,18 +515,21 @@ header {
    Using absolute positioning with % values
    ============================================= */
 .gallery-grid {
-    position: relative;
+    display: grid;
+    grid-template-columns: 485fr 382fr 285fr;
+    grid-template-rows: auto auto auto auto;
+    gap: 20px;
     width: 100%;
-    padding-bottom: 80.58%; /* 967/1200 = maintain aspect ratio */
-    height: 0;
     margin: 40px 0 0;
 }
 
 .g-item {
-    position: absolute;
+    position: relative;
     border-radius: 6px;
     overflow: hidden;
     cursor: pointer;
+    width: 100%;
+    height: 100%;
 }
 
 .g-item.reveal {
@@ -555,86 +556,20 @@ header {
     transform: scale(1.1);
 }
 
-/*
-  All % values derived from Figma specs:
-  Container: 1200px wide × 967px tall
-  left%   = (figma_left - 121) / 1200 * 100
-  top%    = (figma_top  - 196) / 967  * 100
-  width%  = figma_width  / 1200 * 100
-  height% = figma_height / 967  * 100
+/* 
+  Grid Area mappings for perfectly consistent 20px gap:
+  Col 1: 485px | Gap | Col 2: 382px | Gap | Col 3: 285px
 */
 
-/* Image 1: w=485 h=231 — top-left short */
-.g1 {
-    left:   0%;
-    top:    0%;
-    width:  40.42%;
-    height: 23.89%;
-}
-
-/* Image 2: w=690 h=331 — top-right wide (spans col2+3) */
-.g2 {
-    left:   42.25%;
-    top:    0%;
-    width:  57.5%;
-    height: 34.23%;
-}
-
-/* Image 3: w=485 h=458 — left tall (row 2-3) */
-.g3 {
-    left:   0%;
-    top:    25.85%;
-    width:  40.42%;
-    height: 47.36%;
-}
-
-/* Image 4: w=382 h=182 — center small square */
-.g4 {
-    left:   42.42%;
-    top:    35.47%;
-    width:  31.83%;
-    height: 18.82%;
-}
-
-/* Image 5: w=285 h=136 — right small top */
-.g5 {
-    left:   76.17%;
-    top:    35.47%;
-    width:  23.75%;
-    height: 14.07%;
-}
-
-/* Image 6: w=488 h=233 — bottom-left short */
-.g6 {
-    left:   0%;
-    top:    75.39%;
-    width:  40.67%;
-    height: 24.10%;
-}
-
-/* Image 7: w=387 h=421 — center tall (rows 3-4) */
-.g7 {
-    left:   42.25%;
-    top:    55.95%;
-    width:  32.25%;
-    height: 43.54%;
-}
-
-/* Image 8: w=285 h=310 — right medium */
-.g8 {
-    left:   76.17%;
-    top:    51.71%;
-    width:  23.75%;
-    height: 32.06%;
-}
-
-/* Image 9: w=285 h=136 — right bottom small */
-.g9 {
-    left:   76.17%;
-    top:    85.94%;
-    width:  23.75%;
-    height: 14.07%;
-}
+.g1 { grid-column: 1; grid-row: 1; aspect-ratio: 485 / 231; }
+.g2 { grid-column: 2 / span 2; grid-row: 1; aspect-ratio: 690 / 331; }
+.g3 { grid-column: 1; grid-row: 2 / span 2; aspect-ratio: 485 / 458; }
+.g4 { grid-column: 2; grid-row: 2; aspect-ratio: 382 / 182; }
+.g5 { grid-column: 3; grid-row: 2; aspect-ratio: 285 / 136; }
+.g6 { grid-column: 1; grid-row: 4; aspect-ratio: 488 / 233; }
+.g7 { grid-column: 2; grid-row: 3 / span 2; aspect-ratio: 387 / 421; }
+.g8 { grid-column: 3; grid-row: 3; aspect-ratio: 285 / 310; }
+.g9 { grid-column: 3; grid-row: 4; aspect-ratio: 285 / 136; }
 
 
 
