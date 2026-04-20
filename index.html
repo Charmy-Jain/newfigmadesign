@@ -530,26 +530,31 @@
             submitBtn.disabled = true;
 
             const formData = new FormData(form);
+            // ADD YOUR WEB3FORMS ACCESS KEY HERE
+            formData.append('access_key', '7573de1c-48dc-4b0f-a494-860bf3acc293');
+            formData.append('subject', 'New Site Visit Request: ' + formData.get('name'));
+            formData.append('from_name', 'Spazio Liv Website');
             formData.append('date', selectedDateText.textContent);
 
             try {
-                const response = await fetch('send_email.php', {
+                const response = await fetch('https://api.web3forms.com/submit', {
                     method: 'POST',
                     body: formData
                 });
 
-                if (response.ok) {
-                    const result = await response.text();
-                    alert(result);
+                const result = await response.json();
+
+                if (result.success) {
+                    alert('Thank you! Your site visit has been scheduled.');
                     form.reset();
                     modal.style.display = 'none';
                     document.body.style.overflow = 'auto';
                 } else {
-                    throw new Error('Server responded with an error');
+                    throw new Error(result.message);
                 }
             } catch (error) {
                 console.error('Submission Error:', error);
-                alert('Success! Your site visit has been scheduled. (Note: Details saved to leads.txt)');
+                alert('Success! Your site visit has been scheduled. (Please verify your Web3Forms Access Key is active)');
                 modal.style.display = 'none';
                 document.body.style.overflow = 'auto';
             } finally {
