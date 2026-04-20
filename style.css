@@ -256,8 +256,8 @@ header {
 .calendar-header span { font-size: 16px; font-weight: 600; }
 .calendar-month { font-family: var(--sans); }
 .calendar-nav-next { color: var(--primary-red); }
-.calendar-nav { display: flex; gap: 15px; }
-.calendar-nav i { font-size: 14px; cursor: pointer; color: var(--primary-red); }
+.calendar-nav i { font-size: 14px; cursor: pointer; color: var(--primary-red); transition: opacity 0.3s ease; }
+.calendar-nav i.disabled-nav { opacity: 0.2; cursor: not-allowed; }
 .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; font-size: 11px; }
 .calendar-grid span { width: 100%; aspect-ratio: 1; display: flex; align-items: center; justify-content: center; color: #333; cursor: pointer; border-radius: 4px; transition: var(--transition); position: relative; font-weight: 500;}
 .calendar-grid span:not(.muted):not(.day-header):not(.disabled):hover { background: #fdf2f1; color: var(--primary-red); }

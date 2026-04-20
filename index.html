@@ -271,6 +271,7 @@
         let selectedDate = null;
 
         function renderCalendar() {
+            updateNavButtons();
             const year = currentDate.getFullYear();
             const month = currentDate.getMonth();
 
@@ -329,6 +330,7 @@
                     // Interaction only for today and future dates
                     span.addEventListener('click', () => {
                         const dateStr = `${i} ${monthNames[month]} ${year}`;
+                        selectedDate = dateStr; // Store for buttons
                         openBooking(dateStr);
                         
                         // Visual Active State
@@ -359,9 +361,22 @@
             }
         };
 
+        function updateNavButtons() {
+            const today = new Date();
+            if (currentDate.getFullYear() === today.getFullYear() && currentDate.getMonth() === today.getMonth()) {
+                prevMonthBtn.classList.add('disabled-nav');
+            } else {
+                prevMonthBtn.classList.remove('disabled-nav');
+            }
+        }
+
         prevMonthBtn.onclick = () => {
-            currentDate.setMonth(currentDate.getMonth() - 1);
-            renderCalendar();
+            const today = new Date();
+            if (currentDate.getFullYear() > today.getFullYear() || 
+                (currentDate.getFullYear() === today.getFullYear() && currentDate.getMonth() > today.getMonth())) {
+                currentDate.setMonth(currentDate.getMonth() - 1);
+                renderCalendar();
+            }
         };
 
         nextMonthBtn.onclick = () => {
@@ -422,15 +437,24 @@
         }
 
         // Handle "Schedule my Visit" buttons
-        document.querySelectorAll('.btn-booking, .btn.reveal').forEach(btn => {
+        document.querySelectorAll('.btn-booking, .btn.reveal, .final-cta .btn').forEach(btn => {
             if (btn.innerText.includes('Schedule my Visit')) {
                 btn.onclick = (e) => {
                     e.preventDefault();
-                    const monthNames = ["January", "February", "March", "April", "May", "June",
-                        "July", "August", "September", "October", "November", "December"];
-                    const today = new Date();
-                    const dateStr = `${today.getDate()} ${monthNames[today.getMonth()]} ${today.getFullYear()}`;
-                    openBooking(dateStr);
+                    if (!selectedDate) {
+                        alert('Please select a date from the calendar first!');
+                        // Smooth scroll to calendar mockup
+                        const calendarEl = document.querySelector('.calendar-mockup');
+                        if (calendarEl) {
+                            calendarEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            // Add a little highlight animation to the calendar to grab attention
+                            calendarEl.style.transition = 'transform 0.3s ease';
+                            calendarEl.style.transform = 'scale(1.05)';
+                            setTimeout(() => calendarEl.style.transform = 'scale(1)', 300);
+                        }
+                    } else {
+                        openBooking(selectedDate);
+                    }
                 };
             }
         });
