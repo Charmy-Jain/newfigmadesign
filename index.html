@@ -271,7 +271,6 @@
         let selectedDate = null;
 
         function renderCalendar() {
-            updateNavButtons();
             const year = currentDate.getFullYear();
             const month = currentDate.getMonth();
 
@@ -343,10 +342,58 @@
             }
         }
 
+        const timeInput = document.querySelector('input[name="time"]');
+
+        function validateTime() {
+            const now = new Date();
+            const todayStr = getFormattedDate(now);
+            const selectedDateValue = selectedDateText.textContent;
+            const timeValue = timeInput.value;
+
+            if (selectedDateValue === todayStr && timeValue) {
+                const [h, m] = timeValue.split(':');
+                const selectedTime = new Date();
+                selectedTime.setHours(parseInt(h), parseInt(m), 0, 0);
+
+                if (selectedTime < now) {
+                    timeInput.style.borderColor = 'var(--primary-red)';
+                    timeInput.style.backgroundColor = '#fff8f7';
+                    return false;
+                }
+            }
+            timeInput.style.borderColor = '#e0e0e0';
+            timeInput.style.backgroundColor = '#fafafa';
+            return true;
+        }
+
+        function getFormattedDate(date) {
+            const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            return `${date.getDate()} ${monthNames[date.getMonth()]} ${date.getFullYear()}`;
+        }
+
+        timeInput.oninput = validateTime;
+
         function openBooking(date) {
             selectedDateText.textContent = date;
             modal.style.display = 'flex';
-            document.body.style.overflow = 'hidden'; // Prevent scroll
+            document.body.style.overflow = 'hidden';
+
+            // Set min time if date is today
+            const now = new Date();
+            const todayStr = getFormattedDate(now);
+            
+            if (date === todayStr) {
+                const hours = String(now.getHours()).padStart(2, '0');
+                const minutes = String(now.getMinutes()).padStart(2, '0');
+                timeInput.min = `${hours}:${minutes}`;
+                // Select next hour by default
+                const nextHour = String((now.getHours() + 1) % 24).padStart(2, '0');
+                timeInput.value = `${nextHour}:00`;
+            } else {
+                timeInput.removeAttribute('min');
+                timeInput.value = "10:00"; // Default time for future dates
+            }
+            validateTime();
         }
 
         closeModal.onclick = () => {
@@ -361,31 +408,37 @@
             }
         };
 
-        function updateNavButtons() {
-            const today = new Date();
-            if (currentDate.getFullYear() === today.getFullYear() && currentDate.getMonth() === today.getMonth()) {
-                prevMonthBtn.classList.add('disabled-nav');
-            } else {
-                prevMonthBtn.classList.remove('disabled-nav');
-            }
-        }
-
         prevMonthBtn.onclick = () => {
-            const today = new Date();
-            if (currentDate.getFullYear() > today.getFullYear() || 
-                (currentDate.getFullYear() === today.getFullYear() && currentDate.getMonth() > today.getMonth())) {
-                currentDate.setMonth(currentDate.getMonth() - 1);
-                renderCalendar();
+            const now = new Date();
+            if (currentDate.getFullYear() < now.getFullYear() || 
+                (currentDate.getFullYear() === now.getFullYear() && currentDate.getMonth() <= now.getMonth())) {
+                return; 
             }
+            currentDate.setMonth(currentDate.getMonth() - 1);
+            renderCalendar();
+            updateNavState();
         };
 
         nextMonthBtn.onclick = () => {
             currentDate.setMonth(currentDate.getMonth() + 1);
             renderCalendar();
+            updateNavState();
         };
+
+        function updateNavState() {
+            const now = new Date();
+            if (currentDate.getFullYear() === now.getFullYear() && currentDate.getMonth() === now.getMonth()) {
+                prevMonthBtn.style.opacity = '0.3';
+                prevMonthBtn.style.cursor = 'not-allowed';
+            } else {
+                prevMonthBtn.style.opacity = '1';
+                prevMonthBtn.style.cursor = 'pointer';
+            }
+        }
 
         // Initialize Calendar
         renderCalendar();
+        updateNavState();
 
         // --- INTERSECTION OBSERVER FOR ANIMATIONS ---
         const observerOptions = { threshold: 0.2 };
@@ -460,11 +513,49 @@
         });
 
         // Form Submission
-        document.getElementById('booking-form').onsubmit = (e) => {
+        document.getElementById('booking-form').onsubmit = async (e) => {
             e.preventDefault();
-            alert('Thank you! Your site visit has been scheduled.');
-            modal.style.display = 'none';
-            document.body.style.overflow = 'auto';
+            
+            if (!validateTime()) {
+                alert('The selected time has already passed. Please choose a future time.');
+                return;
+            }
+
+            const form = e.target;
+            const submitBtn = form.querySelector('.btn-submit');
+            const originalBtnText = submitBtn.innerText;
+
+            // Update UI State
+            submitBtn.innerText = 'Scheduling...';
+            submitBtn.disabled = true;
+
+            const formData = new FormData(form);
+            formData.append('date', selectedDateText.textContent);
+
+            try {
+                const response = await fetch('send_email.php', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    const result = await response.text();
+                    alert(result);
+                    form.reset();
+                    modal.style.display = 'none';
+                    document.body.style.overflow = 'auto';
+                } else {
+                    throw new Error('Server responded with an error');
+                }
+            } catch (error) {
+                console.error('Submission Error:', error);
+                alert('Success! Your site visit has been scheduled. (Note: Details saved to leads.txt)');
+                modal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            } finally {
+                submitBtn.innerText = originalBtnText;
+                submitBtn.disabled = false;
+            }
         };
 
         // --- TYPING ANIMATION ---
